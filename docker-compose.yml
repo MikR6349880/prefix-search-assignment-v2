@@ -1,0 +1,47 @@
+# docker-compose.yml для v2 проекта (один узел, без security)
+services:
+  opensearch:
+    image: opensearchproject/opensearch:3.0.0
+    container_name: opensearch-v2
+    environment:
+      - "discovery.type=single-node"
+      # Отключаем demo configuration script И security plugin
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"  # <-- Добавить эту строку
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data-v2:/usr/share/opensearch/data
+    networks:
+      - opensearch-v2-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:3.0.0
+    container_name: opensearch-dashboards-v2
+    ports:
+      - "5601:5601"
+    environment:
+      - "OPENSEARCH_HOSTS=http://opensearch:9200" # Используем http, так как security отключен
+      # Отключаем security plugin в Dashboards
+      - "DISABLE_SECURITY_DASHBOARDS_PLUGIN=true"
+      - "SERVER_SSL_ENABLED=false"
+    depends_on:
+      - opensearch
+    networks:
+      - opensearch-v2-net
+
+volumes:
+  opensearch-data-v2:
+
+networks:
+  opensearch-v2-net:
+    driver: bridge
