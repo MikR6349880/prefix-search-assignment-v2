@@ -1,0 +1,5 @@
+venv/
+reports/
+prefix_search_engine_v2_image.tar
+__pycache__/
+*.pyc

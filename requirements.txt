@@ -1,0 +1,3 @@
+requests
+# sentence-transformers # Раскомментируй, когда будем добавлять векторный поиск
+# torch # Раскомментируй, если потребуется отдельно (sentence-transformers обычно тянет torch)
